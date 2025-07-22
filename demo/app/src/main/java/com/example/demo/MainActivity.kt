@@ -1,6 +1,5 @@
 package com.example.demo
 
-import android.icu.text.CaseMap.Title
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,7 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,14 +26,18 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,13 +46,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.semantics.Role
 import com.example.demo.ui.theme.DemoTheme
 
 class MainActivity : ComponentActivity() {
@@ -81,38 +81,56 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun HomeScreen() {
     Column(modifier = Modifier.padding(24.dp)) {
-        RadioButton(
-            selected = true, onClick = {}, colors = RadioButtonDefaults.colors(
-                selectedColor = Color.Red,
-                unselectedColor = Color.Gray,
-                disabledSelectedColor = Color.Magenta
+//Checkbox
+        Checkbox(
+            checked = true, onCheckedChange = {}, colors = CheckboxDefaults.colors(
+                checkedColor = Color.Red,
+                uncheckedColor = Color.Green
             )
         )
 
-        RadioButton(
-            selected = false, onClick = {}, colors = RadioButtonDefaults.colors(
-                selectedColor = Color.Red,
-                unselectedColor = Color.Gray,
-                disabledSelectedColor = Color.Magenta
+        Checkbox(
+            checked = false, onCheckedChange = {}, colors = CheckboxDefaults.colors(
+                checkedColor = Color.Red,
+                uncheckedColor = Color.Green
             )
         )
 
-        RadioButton(
-            selected = true,
-            enabled = false,
-            onClick = {},
-            colors = RadioButtonDefaults.colors(
-                selectedColor = Color.Red,
-                unselectedColor = Color.Gray,
-                disabledSelectedColor = Color.Magenta
-            )
-        )
+        DemoCheckBoxWithTitle(title = "love")
 
-        Spacer(modifier = Modifier.height(24.dp))
-        DemoRadioButtonWithTitle(title = "Male")
-
-        Spacer(modifier = Modifier.height(24.dp))
-        DemoCustomRadioButton(title = "Female")
+//        Radio
+//        RadioButton(
+//            selected = true, onClick = {}, colors = RadioButtonDefaults.colors(
+//                selectedColor = Color.Red,
+//                unselectedColor = Color.Gray,
+//                disabledSelectedColor = Color.Magenta
+//            )
+//        )
+//
+//        RadioButton(
+//            selected = false, onClick = {}, colors = RadioButtonDefaults.colors(
+//                selectedColor = Color.Red,
+//                unselectedColor = Color.Gray,
+//                disabledSelectedColor = Color.Magenta
+//            )
+//        )
+//
+//        RadioButton(
+//            selected = true,
+//            enabled = false,
+//            onClick = {},
+//            colors = RadioButtonDefaults.colors(
+//                selectedColor = Color.Red,
+//                unselectedColor = Color.Gray,
+//                disabledSelectedColor = Color.Magenta
+//            )
+//        )
+//
+//        Spacer(modifier = Modifier.height(24.dp))
+//        DemoRadioButtonWithTitle(title = "Male")
+//
+//        Spacer(modifier = Modifier.height(24.dp))
+//        DemoCustomRadioButton(title = "Female")
 
 //        Button
 //        SimpleButton()
@@ -161,7 +179,33 @@ fun HomeScreen() {
 }
 
 @Composable
-fun DemoRadioButtonWithTitle(title: String){
+fun DemoCheckBoxWithTitle(title: String) {
+    var isChecked by remember {
+        mutableStateOf(false)
+    }
+    Row(
+        modifier = Modifier.selectable(
+            selected = isChecked,
+            onClick = { isChecked = !isChecked },
+            role = Role.Checkbox
+        )
+    ) {
+//        Checkbox(
+//            checked = isChecked, onCheckedChange = null, colors = CheckboxDefaults.colors(
+//                checkedColor = Color.Red,
+//                uncheckedColor = Color.Green
+//            )
+//        )
+
+//        cách thay đổi icon
+        val icon = if (isChecked) Icons.Filled.Check else Icons.Filled.CheckCircle
+        Icon(icon, contentDescription = null)
+        Text(title, modifier = Modifier.padding(start = 12.dp))
+    }
+}
+
+@Composable
+fun DemoRadioButtonWithTitle(title: String) {
     var isSelected by remember {
         mutableStateOf(false)
     }
@@ -171,11 +215,13 @@ fun DemoRadioButtonWithTitle(title: String){
             onClick = { isSelected = !isSelected },
             role = Role.RadioButton
         )
-    ){
-        RadioButton(selected = isSelected, onClick = null,colors = RadioButtonDefaults.colors(
-            selectedColor = Color.Red,
-            unselectedColor = Color.Gray,
-            disabledSelectedColor = Color.Magenta)
+    ) {
+        RadioButton(
+            selected = isSelected, onClick = null, colors = RadioButtonDefaults.colors(
+                selectedColor = Color.Red,
+                unselectedColor = Color.Gray,
+                disabledSelectedColor = Color.Magenta
+            )
         )
         Text(text = title, modifier = Modifier.padding(start = 10.dp))
     }
@@ -183,11 +229,11 @@ fun DemoRadioButtonWithTitle(title: String){
 
 
 @Composable
-fun DemoCustomRadioButton(title: String){
+fun DemoCustomRadioButton(title: String) {
     var isSelected by remember {
         mutableStateOf(false)
     }
-    CustomRadioButton(title = "Female", isSelected= isSelected ) { isSelected = !isSelected}
+    CustomRadioButton(title = "Female", isSelected = isSelected) { isSelected = !isSelected }
 //    Row(
 //        modifier = Modifier.selectable(
 //            selected = isSelected,
@@ -204,20 +250,21 @@ fun DemoCustomRadioButton(title: String){
 
 //định nghĩa để dùng lại nhiều lần
 @Composable
-fun CustomRadioButton(title: String, isSelected: Boolean, onClick: ()->Unit){
+fun CustomRadioButton(title: String, isSelected: Boolean, onClick: () -> Unit) {
     Row(
         modifier = Modifier.selectable(
             selected = isSelected,
             onClick = onClick,
             role = Role.RadioButton
         )
-    ){
+    ) {
 
         val iconRadio = if (isSelected) Icons.Default.CheckCircle else Icons.Default.Check
         Icon(iconRadio, contentDescription = null)
         Text(text = title, modifier = Modifier.padding(start = 10.dp))
     }
 }
+
 @Composable
 fun SimpleButton() {
     val count = remember {
