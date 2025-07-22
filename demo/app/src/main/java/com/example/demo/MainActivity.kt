@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,19 +21,29 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,11 +56,19 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.demo.ui.theme.DemoTheme
 
@@ -71,6 +90,19 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+fun HomeScreen() {
+    Column(modifier = Modifier.padding(24.dp)) {
+        DemoTextField()
+
+        Spacer(modifier = Modifier.height(12.dp))
+        EmailOutlineTextField()
+
+        Spacer(modifier = Modifier.height(12.dp))
+        PasswordOutlineTextField()
+    }
+}
+
+@Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
         text = "Hello $name!",
@@ -79,103 +111,90 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HomeScreen() {
-    Column(modifier = Modifier.padding(24.dp)) {
-//Checkbox
-        Checkbox(
-            checked = true, onCheckedChange = {}, colors = CheckboxDefaults.colors(
-                checkedColor = Color.Red,
-                uncheckedColor = Color.Green
-            )
-        )
-
-        Checkbox(
-            checked = false, onCheckedChange = {}, colors = CheckboxDefaults.colors(
-                checkedColor = Color.Red,
-                uncheckedColor = Color.Green
-            )
-        )
-
-        DemoCheckBoxWithTitle(title = "love")
-
-//        Radio
-//        RadioButton(
-//            selected = true, onClick = {}, colors = RadioButtonDefaults.colors(
-//                selectedColor = Color.Red,
-//                unselectedColor = Color.Gray,
-//                disabledSelectedColor = Color.Magenta
-//            )
-//        )
-//
-//        RadioButton(
-//            selected = false, onClick = {}, colors = RadioButtonDefaults.colors(
-//                selectedColor = Color.Red,
-//                unselectedColor = Color.Gray,
-//                disabledSelectedColor = Color.Magenta
-//            )
-//        )
-//
-//        RadioButton(
-//            selected = true,
-//            enabled = false,
-//            onClick = {},
-//            colors = RadioButtonDefaults.colors(
-//                selectedColor = Color.Red,
-//                unselectedColor = Color.Gray,
-//                disabledSelectedColor = Color.Magenta
-//            )
-//        )
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        DemoRadioButtonWithTitle(title = "Male")
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        DemoCustomRadioButton(title = "Female")
-
-//        Button
-//        SimpleButton()
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        DisableSimpleButton()
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        RoundedCornerButton()
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        BorderSimpleButton()
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        ElevationSimpleButton()
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        OutlinedButton(onClick = {}) {
-//            Text("OutlinedButton")
-//        }
-//
-//        TextButton(onClick = {}) {
-//            Text("TextButton")
-//        }
-//
-//        IconButton(onClick = {}) {
-//            Icon(imageVector = Icons.Default.Home, contentDescription = null)
-//        }
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        DemoClickable()
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        DemoDetectTapestures()
-
-//        Image
-//        BannerCompose(contentScale = ContentScale.Crop)
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        CircleAvatar()
-//
-//        Spacer(modifier = Modifier.height(24.dp))
-//        UrlImageCompose()
-//        BannerCompose(contentScale = ContentScale.Fit)
+fun DemoTextField() {
+    var firstName by remember {
+        mutableStateOf("")
     }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    TextField(value = firstName, onValueChange = { newValue ->
+        firstName = newValue
+    },
+        textStyle = TextStyle(color = Color.Gray, fontSize = 22.sp, fontWeight = FontWeight.Bold),
+        label = { Text("First Name") },
+        placeholder = { Text(text = "Enter your first name") },
+        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Color.Green) },
+        trailingIcon = {
+            IconButton(onClick = {
+                firstName = ""
+            }) {
+                Icon(Icons.Default.Close, contentDescription = null, tint = Color.Green)
+            }
+        },
+        colors = TextFieldDefaults.colors(
+            cursorColor = Color.Yellow,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            errorIndicatorColor = Color.Transparent,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black
+        ),
+        shape = RoundedCornerShape(16.dp),
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Text,
+            capitalization = KeyboardCapitalization.Characters
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+            }
+        )
+    )
+}
+
+@Composable
+fun EmailOutlineTextField() {
+    var email by remember {
+        mutableStateOf("")
+    }
+    OutlinedTextField(value = email, onValueChange = {newValue ->
+        email = newValue
+    },
+        placeholder = { Text("username/email") },
+        label = { Text(text = "username/email") },
+        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) }
+    )
+}
+
+@Composable
+fun PasswordOutlineTextField() {
+    var passwrod by remember {
+        mutableStateOf("")
+    }
+
+    var isShowPassword by remember {
+        mutableStateOf(false)
+    }
+    OutlinedTextField(value = passwrod, onValueChange = {
+        passwrod = it
+    },
+        label = { Text(text = "Passwrod") },
+        placeholder = { Text("Enter passwrod") },
+        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+        trailingIcon = {
+            IconButton(onClick = {
+                isShowPassword = !isShowPassword
+            }) {
+                Icon(
+                    if (isShowPassword) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            }
+        },
+        visualTransformation = if(isShowPassword) VisualTransformation.None else PasswordVisualTransformation()
+    )
 }
 
 @Composable
