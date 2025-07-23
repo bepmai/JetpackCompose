@@ -41,7 +41,7 @@ android {
 
 dependencies {
 //    constraintlayout
-    implementation("androidx.:constraintlayout-compose:1.1.1")
+    implementation(libs.androidx.constraintlayout.compose)
 //    url
     implementation(libs.coil.compose)
 
