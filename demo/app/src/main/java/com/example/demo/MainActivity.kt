@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
@@ -98,11 +99,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             DemoTheme {
                 Surface(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier .fillMaxSize(),
                     color = Color.White
                 ) {
-                    HomeScreen()
+                    HomeScreen(modifier = Modifier)
                 }
             }
         }
@@ -110,16 +110,17 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HomeScreen() {
-    Ingredients()
+fun HomeScreen(modifier: Modifier = Modifier) {
+    Ingredients(modifier = modifier.fillMaxSize())
 }
+
 
 @Composable
 fun Ingredients(modifier: Modifier = Modifier) {
-    ConstraintLayout {
+    ConstraintLayout(modifier = modifier.padding(16.dp).fillMaxSize()) {
         val configuration = LocalConfiguration.current
-        val screenWith = configuration.screenWidthDp.dp
-        val itemWith = (screenWith.value * 0.25).dp
+        val screenWidth = configuration.screenWidthDp.dp
+        val itemWidth = (screenWidth.value * 0.25).dp
 
         val (tvIngredients, imgArrow) = createRefs()
 
@@ -129,12 +130,10 @@ fun Ingredients(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 14.sp,
                 color = Color(0xffFB7D8A)
-            ),
-            modifier = Modifier.constrainAs(tvIngredients) {
+            ), modifier = Modifier.constrainAs(tvIngredients) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start, margin = 16.dp)
-            }
-        )
+            })
 
         Icon(
             imageVector = Icons.Outlined.KeyboardArrowRight,
@@ -145,8 +144,7 @@ fun Ingredients(modifier: Modifier = Modifier) {
                 .constrainAs(imgArrow) {
                     start.linkTo(tvIngredients.end, margin = 6.dp)
                     bottom.linkTo(tvIngredients.bottom)
-                }
-        )
+                })
 
         val (lineOne, lineTwo) = createRefs()
 
@@ -165,11 +163,10 @@ fun Ingredients(modifier: Modifier = Modifier) {
                 unit = null,
                 name = "Mint Leaves",
                 modifier = Modifier
-                    .size(itemWith)
+                    .size(itemWidth)
                     .constrainAs(e1) {
                         lineOneChain
-                    }
-            )
+                    })
 
             Ingredient(
                 icon = R.drawable.ic_lemon,
@@ -177,22 +174,20 @@ fun Ingredients(modifier: Modifier = Modifier) {
                 unit = null,
                 name = "Mint Leaves",
                 modifier = Modifier
-                    .size(itemWith)
+                    .size(itemWidth)
                     .constrainAs(e2) {
                         lineOneChain
-                    }
-            )
+                    })
             Ingredient(
                 icon = R.drawable.ic_lemon,
                 value = 9,
                 unit = null,
                 name = "Mint Leaves",
                 modifier = Modifier
-                    .size(itemWith)
+                    .size(itemWidth)
                     .constrainAs(e3) {
                         lineOneChain
-                    }
-            )
+                    })
         }
 
         ConstraintLayout(
@@ -210,11 +205,10 @@ fun Ingredients(modifier: Modifier = Modifier) {
                 unit = null,
                 name = "Mint Leaves",
                 modifier = Modifier
-                    .size(itemWith)
+                    .size(itemWidth)
                     .constrainAs(e1) {
                         lineOneChain
-                    }
-            )
+                    })
 
             Ingredient(
                 icon = R.drawable.ic_lemon,
@@ -222,43 +216,36 @@ fun Ingredients(modifier: Modifier = Modifier) {
                 unit = null,
                 name = "Mint Leaves",
                 modifier = Modifier
-                    .size(itemWith)
+                    .size(itemWidth)
                     .constrainAs(e2) {
                         lineOneChain
-                    }
-            )
+                    })
             Ingredient(
                 icon = R.drawable.ic_lemon,
                 value = 9,
                 unit = null,
                 name = "Mint Leaves",
                 modifier = Modifier
-                    .size(itemWith)
+                    .size(itemWidth)
                     .constrainAs(e3) {
                         lineOneChain
-                    }
-            )
+                    })
         }
     }
 }
 
 @Composable
 fun Ingredient(
-    @DrawableRes icon: Int,
-    value: Int,
-    unit: String?,
-    name: String,
-    modifier: Modifier = Modifier
+    @DrawableRes icon: Int, value: Int, unit: String?, name: String, modifier: Modifier = Modifier
 ) {
     val backgroundColor = Color(0xFFFEF9E4)
     val borderColor = Color(0xFBE897B2).copy(alpha = 0.7f)
 
     ConstraintLayout(
-        modifier = modifier
-            .background(color = backgroundColor, shape = CircleShape)
-            .border(
-                BorderStroke(width = 1.dp, color = borderColor)
-            )
+        modifier = modifier.background(color = backgroundColor, shape = CircleShape)
+//            .border(
+//                BorderStroke(width = 1.dp, color = borderColor)
+//            )
     ) {
         val horizontalGuideLine = createGuidelineFromTop(0.5f)
         val imgIcon = createRef()
@@ -286,12 +273,10 @@ fun Ingredient(
                 fontSize = 28.sp,
                 lineHeight = 14.sp,
                 color = valueTextColor
-            ),
-            modifier = Modifier.constrainAs(tvValue) {
+            ), modifier = Modifier.constrainAs(tvValue) {
                 top.linkTo(horizontalGuideLine, margin = 2.dp)
                 end.linkTo(verticaGuideLine, margin = 2.dp)
-            }
-        )
+            })
 
         unit?.let {
             Text(
@@ -303,12 +288,10 @@ fun Ingredient(
                     platformStyle = PlatformTextStyle(
                         includeFontPadding = false
                     )
-                ),
-                modifier = Modifier.constrainAs(tvUnit) {
+                ), modifier = Modifier.constrainAs(tvUnit) {
                     top.linkTo(tvValue.bottom, margin = 2.dp)
                     end.linkTo(tvValue.end)
-                }
-            )
+                })
         }
 
         val bottomBarrier = createBottomBarrier(tvValue, tvUnit)
@@ -326,9 +309,7 @@ fun Ingredient(
                 top.linkTo(tvValue.top)
                 end.linkTo(endGuideLine20)
                 width = Dimension.fillToConstraints
-            },
-            maxLines = 2,
-            textAlign = TextAlign.Center
+            }, maxLines = 2, textAlign = TextAlign.Center
         )
     }
 }
