@@ -41,7 +41,7 @@ fun MainApp() {
     ) {
 
         if (currentScreen == Screen.VideoDetailScreen) {
-            DemoTheme() {
+            VideoDetailScreen {
                 currentScreen = Screen.CategoryScreen
             }
         } else {

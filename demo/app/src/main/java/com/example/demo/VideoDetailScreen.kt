@@ -1,8 +1,12 @@
 package com.example.demo
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -22,9 +26,58 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.demo.ui.theme.DemoTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VideoDetailScreen(modifier: Modifier = Modifier, openCategoryScreen: () -> Unit) {
+    val listvideos = fakeVideoData()
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        stickyHeader {
+            VideoDetail(
+                videoThumb = R.drawable.video_thumbnail,
+                videoTitle = "Jetpack Compose List and Grid",
+                views = 100,
+                timeAgo = "23 days ago",
+            )
+        }
 
+        items(listvideos) { video ->
+            NextVideo(videoTitle = video.videoTitle, views = video.views, timeAgo = video.timeAgo)
+        }
+
+        item { Footer() }
+    }
+}
+
+@Composable
+fun Header() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(color = Color.Magenta)
+    )
+}
+
+@Composable
+fun Footer() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(color = Color.Magenta)
+    )
+}
+
+fun fakeVideoData(): List<Video> {
+    val list = mutableListOf<Video>()
+    for (index in 0..5) {
+        val video = Video(videoTitle = "Video $index", views = index, timeAgo = "$index day")
+        list.add(video)
+    }
+    return list
 }
 
 @Composable
@@ -125,6 +178,7 @@ fun VideoDetail(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(color = Color.White)
                 .padding(top = 12.dp)
         ) {
 
@@ -171,7 +225,8 @@ fun NextVideoInfo(videoTitle: String, views: Int, timeAgo: String, modifier: Mod
                 }
         )
 
-        Text(text = videoTitle, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold),
+        Text(
+            text = videoTitle, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold),
             modifier = Modifier.constrainAs(tvVideoTitle) {
                 start.linkTo(imgAvatar.end, margin = 4.dp)
                 end.linkTo(imgMore.start, margin = 4.dp)
@@ -228,7 +283,6 @@ fun NextVideo(videoTitle: String, views: Int, timeAgo: String, modifier: Modifie
 }
 
 
-
 @Composable
 @Preview(name = "Video Info Item Preview", showBackground = true)
 fun VideoActionItemPreview() {
@@ -266,7 +320,7 @@ fun NextVideoPreview() {
 @Preview(name = "Video Detail Preview", showSystemUi = true, showBackground = true)
 fun VideoDetailScreenPreview() {
     DemoTheme {
-        VideoDetailScreen(){
+        VideoDetailScreen() {
 
         }
     }
