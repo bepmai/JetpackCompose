@@ -6,11 +6,21 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,28 +57,64 @@ fun VideoDetailScreen(modifier: Modifier = Modifier, openCategoryScreen: () -> U
             NextVideo(videoTitle = video.videoTitle, views = video.views, timeAgo = video.timeAgo)
         }
 
-        item { Footer() }
     }
 }
 
 @Composable
-fun Header() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .background(color = Color.Magenta)
-    )
+fun FilterCategory(
+    modifier: Modifier = Modifier
+) {
+    val listCategory = fakeCategory()
+
+    var selectedCategory by remember { mutableStateOf<VideoCategory?>(null) }
+
+    LazyRow(
+        modifier = modifier.padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+//        contentPadding = PaddingValues(horizontal = 12.dp)
+    ) {
+        items(listCategory) { category ->
+            val isSelected = category == selectedCategory
+
+            FilterChip(
+                selected = isSelected,
+                onClick = {
+                    selectedCategory = if (isSelected) null else category
+                },
+                label = {
+                    Text(
+                        text = category.name,
+//                        modifier = Modifier
+//                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                },
+                leadingIcon = {
+                    if (isSelected) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Selected"
+                        )
+                    }
+                },
+                shape = RoundedCornerShape(24.dp),
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = Color(0xFFB2FF59), // light green
+                    selectedLabelColor = Color.DarkGray,
+                    containerColor = Color.LightGray.copy(alpha = 0.2f),
+                )
+            )
+        }
+    }
 }
 
-@Composable
-fun Footer() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .background(color = Color.Magenta)
-    )
+fun fakeCategory(): List<VideoCategory> {
+    val list = mutableListOf<VideoCategory>()
+    for (index in 0..5) {
+        val category = VideoCategory(id = index, name = "Categpry $index")
+        list.add(category)
+    }
+
+    return list
 }
 
 fun fakeVideoData(): List<Video> {
@@ -191,6 +237,14 @@ fun VideoDetail(
 
             VideoAction()
 
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .padding(vertical = 12.dp)
+                    .background(color = Color.White)
+            ) {
+                FilterCategory()
+            }
         }
 
     }
@@ -314,6 +368,12 @@ fun VideoDetailPreview() {
 @Preview(name = "Next video preview", showBackground = true)
 fun NextVideoPreview() {
     NextVideo(videoTitle = "Jetpack Compose Basic Layout", views = 22, timeAgo = " 20 years ago")
+}
+
+@Composable
+@Preview(name = "Filter Category", showBackground = true)
+fun FilterCategoryPreview() {
+    FilterCategory()
 }
 
 @Composable
